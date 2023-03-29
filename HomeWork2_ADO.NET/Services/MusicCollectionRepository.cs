@@ -65,7 +65,30 @@ namespace HomeWork2_ADO.NET.Services
 
         public int Create(Track track)
         {
-            throw new NotImplementedException();
+            int id;
+            using var connection = new SqlConnection(connectionString);
+            connection.Open();
+
+            var query = @"INSERT INTO Track (TrackName, TrackTime, id_disc, id_style, id_performers)" +
+                "VALUES (@trackName, @trackTime, @idDisk, @idStyle, @idPerformers)" +
+                "SET @id_track = SCOPE_IDENTITY()";
+            var command = new SqlCommand(query, connection);
+            command.Parameters.Add(new SqlParameter("@trackName", track.TrackName));
+            command.Parameters.Add(new SqlParameter("@trackTime", track.TrackTime));
+            command.Parameters.Add(new SqlParameter("@idDisk", track.idDisk));
+            command.Parameters.Add(new SqlParameter("@idStyle", track.idStyle));
+            command.Parameters.Add(new SqlParameter("@idPerformers", track.idPerformers));
+
+            var IdParam = new SqlParameter()
+            {
+                ParameterName = "@id_track",
+                DbType = DbType.Int32,
+                Direction = ParameterDirection.Output
+            };
+            command.Parameters.Add(IdParam);
+            command.ExecuteNonQuery();
+            id = (int)IdParam.Value;
+            return id;
         }
 
         public void DeleteMusicDisk(int id)
@@ -90,7 +113,12 @@ namespace HomeWork2_ADO.NET.Services
 
         public void DeleteTrack(int id)
         {
-            throw new NotImplementedException();
+            var query = "DELETE FROM Track WHERE id_track = @id";
+            using var connection = new SqlConnection(connectionString);
+            connection.Open();
+            var command = new SqlCommand(query, connection);
+            command.Parameters.Add(new SqlParameter("id", id));
+            command.ExecuteNonQuery();
         }
 
         public IEnumerable<MusicDisk> GetAllMusicDisks()
@@ -200,7 +228,32 @@ namespace HomeWork2_ADO.NET.Services
 
         public IEnumerable<Track> GetAllTracks()
         {
-            throw new NotImplementedException();
+            List<Track> list = new List<Track>();
+            using var connection = new SqlConnection(connectionString);
+            connection.Open();
+            var query = "SELECT * FROM Track";
+            var command = new SqlCommand(query, connection);
+            var reader = command.ExecuteReader();
+
+            if (reader.HasRows)
+            {
+                while (reader.Read())
+                {
+                    var track = new Track()
+                    {
+                        id = reader.GetInt32(0),
+                        TrackName = reader.GetString(1),
+                        TrackTime = reader.GetTimeSpan(2),
+                        idDisk = reader.GetInt32(3),
+                        idStyle = reader.GetInt32(4),
+                        idPerformers = reader.GetInt32(5),
+                    };
+
+
+                    list.Add(track);
+                }
+            }
+            return list;
         }
 
         public MusicDisk GetMusicDiskById(int id)
@@ -261,17 +314,85 @@ namespace HomeWork2_ADO.NET.Services
 
         public Publisher GetPublisherById(int id)
         {
-            throw new NotImplementedException();
+            using var connection = new SqlConnection(connectionString);
+            connection.Open();
+            Publisher publisher = null;
+            var query = "SELECT * FROM Publisher WHERE id_publisher = @id";
+            var command = new SqlCommand(query, connection);
+            command.Parameters.Add(new SqlParameter("@id", id));
+            var reader = command.ExecuteReader();
+
+            if (reader.HasRows)
+            {
+                while (reader.Read())
+                {
+                    publisher = new Publisher()
+                    {
+                        id = reader.GetInt32(0),
+                        PublisherName = reader.GetString(1),
+                        Country = reader.GetString(2)
+                    };
+                }
+            }
+            else throw new Exception("Publisher not found");
+
+            return publisher;
         }
 
         public Style GetStyleById(int id)
         {
-            throw new NotImplementedException();
+            using var connection = new SqlConnection(connectionString);
+            connection.Open();
+            Style style = null;
+            var query = "SELECT * FROM Style WHERE id_style = @id";
+            var command = new SqlCommand(query, connection);
+            command.Parameters.Add(new SqlParameter("@id", id));
+            var reader = command.ExecuteReader();
+
+            if (reader.HasRows)
+            {
+                while (reader.Read())
+                {
+                    style = new Style()
+                    {
+                        id = reader.GetInt32(0),
+                        StyleName = reader.GetString(1)
+                    };
+                }
+            }
+            else throw new Exception("Style not found");
+
+            return style;
         }
 
         public Track GetTrackById(int id)
         {
-            throw new NotImplementedException();
+            using var connection = new SqlConnection(connectionString);
+            connection.Open();
+            Track track = null;
+            var query = "SELECT * FROM Track WHERE id_track = @id";
+            var command = new SqlCommand(query, connection);
+            command.Parameters.Add(new SqlParameter("@id", id));
+            var reader = command.ExecuteReader();
+
+            if (reader.HasRows)
+            {
+                while (reader.Read())
+                {
+                    track = new Track()
+                    {
+                        id = reader.GetInt32(0),
+                        TrackName = reader.GetString(1),
+                        TrackTime = reader.GetTimeSpan(2),
+                        idDisk = reader.GetInt32(3),
+                        idStyle = reader.GetInt32(4),
+                        idPerformers = reader.GetInt32(5),
+                    };
+                }
+            }
+            else throw new Exception("Track not found");
+
+            return track;
         }
 
         public void Update(Performers performers)
@@ -308,7 +429,20 @@ namespace HomeWork2_ADO.NET.Services
 
         public void Update(Track track)
         {
-            throw new NotImplementedException();
+            var query = @"UPDATE Track
+                      SET TrackName = @name, TrackTime = @trackTime, id_disc = @idDisc, id_style = @idStyle, id_performers = @idPerformers
+                      WHERE id_track = @id";
+
+            using var connection = new SqlConnection(connectionString);
+            connection.Open();
+            var command = new SqlCommand(query, connection);
+            command.Parameters.Add(new SqlParameter("id", track.id));
+            command.Parameters.Add(new SqlParameter("name", track.TrackName));
+            command.Parameters.Add(new SqlParameter("trackTime", track.TrackTime));
+            command.Parameters.Add(new SqlParameter("idDisc", track.idDisk));
+            command.Parameters.Add(new SqlParameter("idStyle", track.idStyle));
+            command.Parameters.Add(new SqlParameter("idPerformers", track.idPerformers));
+            command.ExecuteNonQuery();
         }
     }
 }

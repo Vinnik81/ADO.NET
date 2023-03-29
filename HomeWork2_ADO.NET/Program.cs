@@ -12,7 +12,8 @@ namespace HomeWork2_ADO.NET
             do
             {
                 Console.WriteLine("0-Exit\n1-Read all Performers\n2-Read Performer for id_performers\n3-Create Performer\n4-Update Performer\n5-Delete Performer\n"
-                    + "6-Read All MusicDisk\n7-Read MusicDisk for id_disc\n8-Create MusicDisc\n9-Update MusicDisk\n10-Delete MusicDisk");
+                    + "6-Read All MusicDisk\n7-Read MusicDisk for id_disc\n8-Create MusicDisc\n9-Update MusicDisk\n10-Delete MusicDisk\n11-Read all Tracks\n" +
+                    $"12-Read track for id_track\n13-Create track\n14-Update Track\n15-Delete Track\n16-Read Style for id_style\n17-Read Publisher for id_publisher");
                 int.TryParse(Console.ReadLine(), out int num);
 
                 MusicCollectionRepository musicCollectionRepository = new MusicCollectionRepository();
@@ -20,6 +21,7 @@ namespace HomeWork2_ADO.NET
                 var listMd = musicCollectionRepository.GetAllMusicDisks().ToList();
                 var listS = musicCollectionRepository.GetAllStyle().ToList();
                 var listPb = musicCollectionRepository.GetAllPublishers().ToList();
+                var listTr = musicCollectionRepository.GetAllTracks().ToList();
 
                 switch (num)
                 {
@@ -74,14 +76,25 @@ namespace HomeWork2_ADO.NET
                         break;
 
                     case 6:
-                        for (int i = 0; i < listMd.Count(); i++) Console.WriteLine($"id: {listMd[i].id} DiscName: {listMd[i].DiskName} ReleaseDate: {listMd[i].ReleaseDate}" +
-                            $"id_style: {listMd[i].idStyle} id_performer: {listMd[i].idPerformer} id_publisher: {listMd[i].idPublisher}");
-                        Console.WriteLine("Style List: ");
-                        for (int i = 0; i < listS.Count(); i++) Console.WriteLine($"id_style: {listS[i].id} StyleName: {listS[i].StyleName}");
-                        Console.WriteLine("Performers List:");
-                        for (int i = 0; i < list.Count(); i++) Console.WriteLine($"id_performer: {list[i].id} PerformersName: {list[i].PerformersName}");
-                        Console.WriteLine("Publishers List:");
-                        for (int i = 0; i < listPb.Count(); i++) Console.WriteLine($"id_publisher: {listPb[i].id} PerformersName: {listPb[i].PublisherName}");
+
+                        for (int i = 0; i < listMd.Count(); i++)
+                        {
+                            for (int j = 0; j < listS.Count(); j++)
+                            {
+                                for (int k = 0; k < list.Count(); k++)
+                                {
+                                    for (int m = 0; m < listPb.Count(); m++)
+                                    {
+                                        if (listS[j].id == listMd[i].idStyle && list[k].id == listMd[i].idPerformer && listPb[m].id == listMd[i].idPublisher)
+                                        {
+                                            Console.WriteLine($"id: {listMd[i].id} DiscName: {listMd[i].DiskName} | ReleaseDate: {listMd[i].ReleaseDate} | " +
+                                            $" id_style: {listMd[i].idStyle} Style: {listS[j].StyleName} | id_performer: {listMd[i].idPerformer} Performer: {list[k].PerformersName} " +
+                                            $" | id_publisher: {listMd[i].idPublisher} Publisher: {listPb[m].PublisherName}");
+                                        }
+                                    }
+                                }
+                            }
+                        }
                         break;
 
                     case 7:
@@ -146,6 +159,107 @@ namespace HomeWork2_ADO.NET
                         musicCollectionRepository.DeleteMusicDisk(idDisk);
                         listMd = musicCollectionRepository.GetAllMusicDisks().ToList();
                         Console.WriteLine("Size: " + listMd.Count());
+                        break;
+
+                    case 11:
+                        for (int i = 0; i < listTr.Count(); i++)
+                        {
+                            for (int j = 0; j < listMd.Count(); j++)
+                            {
+                                for (int k = 0; k < listS.Count(); k++)
+                                {
+                                    for (int m = 0; m < list.Count(); m++)
+                                    {
+                                        if (listMd[j].id == listTr[i].idDisk && listS[k].id == listTr[i].idStyle && list[m].id == listTr[i].idPerformers)
+                                        {
+                                            Console.WriteLine($"id: {listTr[i].id} TrackName: {listTr[i].TrackName} | TrackTime: {listTr[i].TrackTime}" +
+                                            $" | id_disk: {listTr[i].idDisk} Disk: {listMd[j].DiskName} | id_style: {listTr[i].idStyle} Style: {listS[k].StyleName} | " +
+                                            $" id_performers: {listTr[i].idPerformers} Performer: {list[m].PerformersName}");
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                        break;
+
+                    case 12:
+                        Console.WriteLine("Size: " + listTr.Count());
+                        Console.WriteLine("Enter id_track: ");
+                        int.TryParse(Console.ReadLine(), out int id_track);
+                        Track track = musicCollectionRepository.GetTrackById(id_track);
+                        Console.WriteLine(track);
+                        break;
+
+                    case 13:
+                        Console.WriteLine("Enter  TrackName:  ");
+                        string trackName = Console.ReadLine();
+                        Console.WriteLine("Enter TrackTime:  ");
+                        TimeSpan trackTime = TimeSpan.Parse(Console.ReadLine());
+                        Console.WriteLine("Enter id_disk:  ");
+                        int.TryParse(Console.ReadLine(), out int idDiskTr);
+                        Console.WriteLine("Enter id_style:  ");
+                        int.TryParse(Console.ReadLine(), out int idStyleTr);
+                        Console.WriteLine("Enter id_performer:  ");
+                        int.TryParse(Console.ReadLine(), out int idPerformerTr);
+
+                        Track trackCr = new Track
+                        {
+                             TrackName = trackName,
+                             TrackTime = trackTime,
+                            idDisk = idDiskTr,
+                            idStyle = idStyleTr,
+                            idPerformers = idPerformerTr
+                        };
+
+                        var Id_tr = musicCollectionRepository.Create(trackCr);
+                        Track tr = musicCollectionRepository.GetTrackById(Id_tr);
+                        Console.WriteLine(tr.ToString());
+                        break;
+
+                    case 14:
+                        Console.WriteLine("Enter id_track: ");
+                        int.TryParse(Console.ReadLine(), out int id_trackUp);
+                        Track trackUp = musicCollectionRepository.GetTrackById(id_trackUp);
+                        Console.WriteLine("Enter TrackName: ");
+                        trackUp.TrackName = Console.ReadLine();
+                        Console.WriteLine("Enter TrackTime: ");
+                        trackUp.TrackTime = TimeSpan.Parse(Console.ReadLine());
+                        Console.WriteLine("Enter id_disk: ");
+                        int.TryParse(Console.ReadLine(), out int idDiskUp);
+                        trackUp.idDisk = idDiskUp;
+                        Console.WriteLine("Enter id_style: ");
+                        int.TryParse(Console.ReadLine(), out int idStyleUp);
+                        trackUp.idStyle = idStyleUp;
+                        Console.WriteLine("Enter id_performer:  ");
+                        int.TryParse(Console.ReadLine(), out int idPerformersUp);
+                        trackUp.idPerformers = idPerformersUp;
+                        musicCollectionRepository.Update(trackUp);
+                        Console.WriteLine(trackUp);
+                        break;
+
+                    case 15:
+                        Console.WriteLine("Size: " + listTr.Count());
+                        Console.WriteLine("Enter id_track: ");
+                        int.TryParse(Console.ReadLine(), out int idTrack);
+                        musicCollectionRepository.DeleteTrack(idTrack);
+                        listTr = musicCollectionRepository.GetAllTracks().ToList();
+                        Console.WriteLine("Size: " + listTr.Count());
+                        break;
+
+                    case 16:
+                        Console.WriteLine("Size: " + listS.Count());
+                        Console.WriteLine("Enter id_style: ");
+                        int.TryParse(Console.ReadLine(), out int id_s);
+                        Style style = musicCollectionRepository.GetStyleById(id_s);
+                        Console.WriteLine(style);
+                        break;
+
+                    case 17:
+                        Console.WriteLine("Size: " + listPb.Count());
+                        Console.WriteLine("Enter id_publisher: ");
+                        int.TryParse(Console.ReadLine(), out int id_pub);
+                        Publisher publisher = musicCollectionRepository.GetPublisherById(id_pub);
+                        Console.WriteLine(publisher);
                         break;
 
                     default:
