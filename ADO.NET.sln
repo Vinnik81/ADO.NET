@@ -11,7 +11,9 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DB", "DB\DB.csproj", "{F14C
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ADO.NET_2", "ADO.NET_2\ADO.NET_2.csproj", "{DD3B89A1-9A40-412A-B31E-5E63CA499A81}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "HomeWork2_ADO.NET", "HomeWork2_ADO.NET\HomeWork2_ADO.NET.csproj", "{4024FC74-4F48-4033-A0E6-44899D5BF0B2}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "HomeWork2_ADO.NET", "HomeWork2_ADO.NET\HomeWork2_ADO.NET.csproj", "{4024FC74-4F48-4033-A0E6-44899D5BF0B2}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MyDapper", "Dapper\MyDapper.csproj", "{FC995B0B-5CA6-4029-9E87-3BF407810DC6}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -39,6 +41,10 @@ Global
 		{4024FC74-4F48-4033-A0E6-44899D5BF0B2}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{4024FC74-4F48-4033-A0E6-44899D5BF0B2}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{4024FC74-4F48-4033-A0E6-44899D5BF0B2}.Release|Any CPU.Build.0 = Release|Any CPU
+		{FC995B0B-5CA6-4029-9E87-3BF407810DC6}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{FC995B0B-5CA6-4029-9E87-3BF407810DC6}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{FC995B0B-5CA6-4029-9E87-3BF407810DC6}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{FC995B0B-5CA6-4029-9E87-3BF407810DC6}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
