@@ -33,7 +33,8 @@ namespace MyDapper.Repositories
         List<City> GetCitiesByCountry(string country);
         List<Category> GetCategoriesByClient(string client);
         List<Promotion> GetPromotionsByCategory(string category);
-        List<Promotion> GetPromotionsProducts();
+        List<Promotion> GetPromotionsProducts(string product);
+        List<Product> GetProducts();
 
         ////////////////////////////////////////////////////////////
 

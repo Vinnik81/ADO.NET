@@ -42,7 +42,9 @@ namespace MyDapper.Repositories
 
         public void AddClient(Client client)
         {
-            throw new NotImplementedException();
+            using var db = new SqlConnection(connectionString);
+            var query = "INSERT INTO Clients (FullName, DateOfBith, Gender, Email, CountryId, CityId) VALUES (@FullName, @DateOfBith, @Gender, @Email, @CountryId, @CityId)";
+            db.Execute(query, client);
         }
 
         public void AddCountry(Country country)
@@ -61,17 +63,25 @@ namespace MyDapper.Repositories
 
         public void AddPromotion(Promotion promotion)
         {
-            throw new NotImplementedException();
+            using var db = new SqlConnection(connectionString);
+            var query = "INSERT INTO Promotions ([Percent], StartDate, EndDate, CountryId, ProducId) " +
+                "VALUES (@Percent, @StartDate, @EndDate, @CountryId, @ProductId)";
+            db.Execute(query, promotion);
         }
 
         public void AddPromotion(params Promotion[] promotion)
         {
-            throw new NotImplementedException();
+            using var db = new SqlConnection(connectionString);
+            var query = "INSERT INTO Promotions ([Percent], StartDate, EndDate, CountryId, ProducId) " +
+                "VALUES (@Percent, @StartDate, @EndDate, @CountryId, @ProductId)";
+            db.Execute(query, promotion);
         }
 
         public void DeleteCategory(int id)
         {
-            throw new NotImplementedException();
+            using var db = new SqlConnection(connectionString);
+            var query = "DELETE FROM Categories WHERE Id = @id";
+            db.Execute(query, new { id });
         }
 
         public void DeleteCity(int id)
@@ -83,19 +93,23 @@ namespace MyDapper.Repositories
 
         public void DeleteClient(int id)
         {
-           
+            using var db = new SqlConnection(connectionString);
+            var query = "DELETE FROM Clients WHERE Id = @id";
+            db.Execute(query, new { id });
         }
 
         public void DeleteCountry(int id)
         {
             using var db = new SqlConnection(connectionString);
             var query = "DELETE FROM Countries WHERE Id = @id";
-            db.Execute(query, id);
+            db.Execute(query, new { id });
         }
 
         public void DeletePromotion(int id)
         {
-            throw new NotImplementedException();
+            using var db = new SqlConnection(connectionString);
+            var query = "DELETE FROM Promotions WHERE Id = @id";
+            db.Execute(query, new { id });
         }
 
         public List<Category> GetCategories()
@@ -107,7 +121,10 @@ namespace MyDapper.Repositories
 
         public List<Category> GetCategoriesByClient(string client)
         {
-            throw new NotImplementedException();
+            using var db = new SqlConnection(connectionString);
+            var query = "SELECT ct.Name FROM InterestedBuyers ib JOIN Categories ct ON ib.CategoryId = ct.Id JOIN Clients cl ON ib.ClientId = cl.Id where cl.FullName = @client";
+            var categories = db.Query<Category>(query, new { client });
+            return categories.ToList();
         }
 
         public List<City> GetCities()
@@ -119,22 +136,31 @@ namespace MyDapper.Repositories
 
         public List<City> GetCitiesByCountry(string country)
         {
-            throw new NotImplementedException();
+            using var db = new SqlConnection(connectionString);
+            var query = "SELECT ci.Name FROM Clients cl JOIN Cities ci ON cl.CityId = ci.Id JOIN Countries co ON cl.CountryId = co.Id where co.Name = @country";
+            var cities = db.Query<City>(query, new { country });
+            return cities.ToList();
         }
 
         public List<Client> GetClients()
         {
-            throw new NotImplementedException();
+            using var db = new SqlConnection(connectionString);
+            var query = "SELECT * FROM Clients";
+            return db.Query<Client>(query).ToList();
         }
 
         public List<Client> GetClientsByCity(string city)
         {
-            throw new NotImplementedException();
+            using var db = new SqlConnection(connectionString);
+            var query = "SELECT cl.Id, cl.FullName, cl.Gender FROM Clients cl, Cities ci where cl.CityId = ci.Id and ci.Name = @city";
+            return db.Query<Client>(query, new { city }).ToList();
         }
 
         public List<Client> GetClientsByCountry(string country)
         {
-            throw new NotImplementedException();
+            using var db = new SqlConnection(connectionString);
+            var query = "SELECT cl.Id, cl.FullName, cl.Gender FROM Clients cl, Countries co where cl.CountryId = co.Id and co.Name = @country";
+            return db.Query<Client>(query, new { country }).ToList();
         }
 
         public List<string> GetClientsEmail()
@@ -151,29 +177,46 @@ namespace MyDapper.Repositories
             return db.Query<Country>(query).ToList();
         }
 
+        public List<Product> GetProducts()
+        {
+            using var db = new SqlConnection(connectionString);
+            var query = "SELECT * FROM Products";
+            return db.Query<Product>(query).ToList();
+        }
+
         public List<Promotion> GetPromotions()
         {
-            throw new NotImplementedException();
+            using var db = new SqlConnection(connectionString);
+            var query = "SELECT * FROM Promotions";
+            return db.Query<Promotion>(query).ToList();
         }
 
         public List<Promotion> GetPromotionsByCategory(string category)
         {
-            throw new NotImplementedException();
+            using var db = new SqlConnection(connectionString);
+            var query = "SELECT pr.[Percent], pr.StartDate, pr.EndDate, pr.CountryId, pr.ProducId FROM Promotions pr JOIN Products p ON pr.ProducId = p.Id JOIN Categories c ON p.CategoryId = c.Id where c.Name = @category";
+            return db.Query<Promotion>(query, new { category }).ToList();
         }
 
         public List<Promotion> GetPromotionsByCountry(string country)
         {
-            throw new NotImplementedException();
+            using var db = new SqlConnection(connectionString);
+            var query = "SELECT pr.Id, pr.[Percent], pr.StartDate, pr.EndDate, pr.ProducId FROM Promotions pr, Countries co, Products p where pr.CountryId = co.Id and pr.ProducId = p.Id and co.Name = @country";
+            return db.Query<Promotion>(query, new { country }).ToList();
         }
 
-        public List<Promotion> GetPromotionsProducts()
+        public List<Promotion> GetPromotionsProducts(string product)
         {
-            throw new NotImplementedException();
+            using var db = new SqlConnection(connectionString);
+            var query = "SELECT pr.Id, pr.[Percent], pr.StartDate, pr.EndDate, pr.CountryId, pr.ProducId FROM Promotions pr, Countries co, Products p where pr.CountryId = co.Id and pr.ProducId = p.Id and p.Name = @product";
+            return db.Query<Promotion>(query, new { product }).ToList();
         }
 
         public void UpdateCategory(Category category)
         {
-            throw new NotImplementedException();
+            using var db = new SqlConnection(connectionString);
+            var query = @"UPDATE Categories SET Name = @Name WHERE Id = @id";
+            db.Execute(query, category);
         }
 
         public void UpdateCity(City city)
@@ -185,7 +228,9 @@ namespace MyDapper.Repositories
 
         public void UpdateClient(Client client)
         {
-            throw new NotImplementedException();
+            using var db = new SqlConnection(connectionString);
+            var query = @"UPDATE Clients SET FullName = @FullName, DateOfBith = @DateBith, Gender = @Gender, Email = @Email, CountryId = @CountryId, CityId = @CityId WHERE Id = @id";
+            db.Execute(query, client);
         }
 
         public void UpdateCoutry(Country country)
@@ -197,7 +242,12 @@ namespace MyDapper.Repositories
 
         public void UpdatePromotion(Promotion promotion)
         {
-            throw new NotImplementedException();
+            using var db = new SqlConnection(connectionString);
+            var query = @"UPDATE Promotions SET
+            [Percent] = @Percent, StartDate = @StartDate, EndDate = @EndDate,
+            CountryId = @CountryId, ProducId = @ProductId
+            WHERE Id = @id";
+            db.Execute(query, promotion);
         }
     }
 }
